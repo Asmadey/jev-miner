@@ -1,0 +1,15 @@
+.env
+.env.*
+__pycache__/
+*.pyc
+.DS_Store
+
+# Pipeline output: contains chat text and must never be committed
+messages.jsonl
+jev_out.jsonl
+candidates.jsonl
+extractions.jsonl
+report.md
+*.jsonl
+result.json
+*.zip

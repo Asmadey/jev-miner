@@ -1,0 +1,35 @@
+{
+  "name": "ai-automation-results",
+  "target": "Участник сам внедрил ИИ или автоматизацию в бизнес-процесс и описал измеримый результат",
+  "questions": {
+    "ai_business": {
+      "type": "noul",
+      "instructions": "Does the message describe AI or automation the author built or put into use for a business process (sales, CRM, documents, support, accounting, reporting, communications)?",
+      "criteria": {
+        "true": "The author describes a concrete business process that is now automated or supported by AI or scripts.",
+        "false": "No business process is described, or the message is a question, complaint or general discussion."
+      }
+    },
+    "measurable_result": {
+      "type": "noul",
+      "instructions": "Does the author report a measurable result: time saved, cost reduced, revenue, number of items processed, or a percentage improvement?",
+      "criteria": {
+        "true": "A specific number or clearly quantified benefit is stated.",
+        "false": "No quantified result is stated."
+      }
+    },
+    "category": {
+      "type": "choice",
+      "instructions": "Which area does the automation belong to?",
+      "criteria": {
+        "sales": "Sales, deals, pricing, quotes.",
+        "documents": "Documents, scans, contracts, PDF or Word files.",
+        "support": "Customer support, chat replies, tickets.",
+        "accounting": "Accounting, payroll, finance.",
+        "analytics": "Reports, dashboards, monitoring.",
+        "other": "Anything else."
+      }
+    }
+  },
+  "gate": {"question": "ai_business", "threshold": 0.8}
+}

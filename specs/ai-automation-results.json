@@ -1,0 +1,38 @@
+{
+  "name": "ai-automation-results-v3",
+  "target": "Участник сам внедрил ИИ или автоматизацию в бизнес-процесс и описал измеримый результат",
+  "questions": {
+    "ai_business": {
+      "type": "noul",
+      "instructions": "Does the author name concretely what they personally built or deployed, an AI tool or automation, that is already running and used for a business task? Answer no for plans, questions, discussion of tools made by other people, announcements, AI-generated text pasted as an answer, and general exclamations about having built something without saying what it does.",
+      "criteria": {
+        "true": "The message says what the finished automation or AI tool does (for example a function, a process or a business task) and that it is in use now.",
+        "false": "Planned or unfinished work, questions, complaints, discussion of tools made by others, news, AI-generated text pasted as an answer, or a general exclamation such as having made an app or a robot without any concrete description."
+      }
+    },
+    "measurable_result": {
+      "type": "noul",
+      "instructions": "Does the author report a measurable result: time saved, cost reduced, revenue, number of items processed, or a percentage improvement?",
+      "criteria": {
+        "true": "A specific number or clearly quantified benefit is stated.",
+        "false": "No quantified result is stated."
+      }
+    },
+    "category": {
+      "type": "choice",
+      "instructions": "Which area does the automation belong to?",
+      "criteria": {
+        "sales": "Sales, deals, pricing, quotes.",
+        "documents": "Documents, scans, contracts, PDF or Word files.",
+        "support": "Customer support, chat replies, tickets.",
+        "accounting": "Accounting, payroll, finance.",
+        "analytics": "Reports, dashboards, monitoring.",
+        "other": "Anything else."
+      }
+    }
+  },
+  "gate": {
+    "question": "ai_business",
+    "threshold": 0.6
+  }
+}
