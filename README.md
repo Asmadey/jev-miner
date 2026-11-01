@@ -1,4 +1,4 @@
-# chat-miner
+# jev-miner
 
 Скилл для Claude Code: находит в экспорте Telegram-чата сообщения по заданной теме, отбирает среди них кейсы и пишет отчёт в Markdown.
 
@@ -18,7 +18,7 @@
 ## Установка
 
 ```bash
-git clone https://github.com/Asmadey/chat-miner.git ~/.claude/skills/chat-miner
+git clone https://github.com/Asmadey/jev-miner.git ~/.claude/skills/jev-miner
 ```
 
 ## Использование
@@ -26,8 +26,8 @@ git clone https://github.com/Asmadey/chat-miner.git ~/.claude/skills/chat-miner
 Рабочая папка создаётся вне любого git-репозитория, потому что в ней лежат тексты сообщений.
 
 ```bash
-S=~/.claude/skills/chat-miner
-W=~/chat-miner-runs/my-search
+S=~/.claude/skills/jev-miner
+W=~/jev-miner-runs/my-search
 
 # 1. Подготовка: из экспорта Telegram (JSON) в messages.jsonl
 python3 $S/scripts/mine.py prepare --export result.json --work "$W"

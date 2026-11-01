@@ -1,9 +1,9 @@
 ---
-name: chat-miner
+name: jev-miner
 description: Find messages in a chat export (Telegram JSON) that match a described target, using Jev as a yes/no classifier, then extract cases from the matches with an LLM and write a Markdown report. Use when the user has a chat export and wants to find posts about a topic, results, cases or products, or asks to run Jev over a chat. Triggers: "найди в чате", "извлеки кейсы из экспорта", "прогони через Jev", "classify chat messages".
 ---
 
-# chat-miner
+# jev-miner
 
 Pipeline for mining a chat export. Cheap binary filter (Jev) first, then context and extraction on the matches only.
 
@@ -26,7 +26,7 @@ Script: `scripts/mine.py` (stdlib only, Python 3.9+). Helper: `scripts/anonymize
 3. **Never print the key.** The script takes `OPENROUTER_API_KEY` from the environment, or from the skill's own `.env` (git-ignored, mode 600) when the variable is unset. It never prints the value. Check presence by name only.
    Do not copy the skill folder into a repository or share it: the `.env` inside holds a live key.
 
-4. **Work directory lives outside git repositories.** It holds raw message text. Default suggestion: `~/chat-miner-runs/<run-name>/`.
+4. **Work directory lives outside git repositories.** It holds raw message text. Default suggestion: `~/jev-miner-runs/<run-name>/`.
 5. **Report cost.** After a run, show the `usage` totals (calls, input and output tokens, USD). Tell the user to cross-check with the OpenRouter activity page, because the per-response `usage.cost` is the number the script can see.
 
 ## Workflow
@@ -34,7 +34,7 @@ Script: `scripts/mine.py` (stdlib only, Python 3.9+). Helper: `scripts/anonymize
 ### 1. Prepare
 
 ```bash
-python3 ~/.claude/skills/chat-miner/scripts/mine.py prepare \
+python3 ~/.claude/skills/jev-miner/scripts/mine.py prepare \
   --export "<path/to/result.json>" --work "<work-dir>" --min-chars 120
 ```
 
@@ -54,14 +54,14 @@ Show the spec to the user, get approval, save it to `specs/<name>.json`. Start f
 ### 3. Dry run, then approval, then classify
 
 ```bash
-python3 ~/.claude/skills/chat-miner/scripts/mine.py classify \
+python3 ~/.claude/skills/jev-miner/scripts/mine.py classify \
   --work "<work-dir>" --spec "specs/<name>.json"
 ```
 
 Shows the number of requests and an anonymized sample. Ask the user for approval. Only after a yes:
 
 ```bash
-python3 ~/.claude/skills/chat-miner/scripts/mine.py classify \
+python3 ~/.claude/skills/jev-miner/scripts/mine.py classify \
   --work "<work-dir>" --spec "specs/<name>.json" --send --workers 8
 ```
 
@@ -72,7 +72,7 @@ Check cost: `mine.py usage --work <work-dir>`.
 ### 4. Candidates
 
 ```bash
-python3 ~/.claude/skills/chat-miner/scripts/mine.py candidates \
+python3 ~/.claude/skills/jev-miner/scripts/mine.py candidates \
   --work "<work-dir>" --spec "specs/<name>.json" [--threshold 0.85]
 ```
 
@@ -101,7 +101,7 @@ If the user approves an external model (for example DeepSeek via OpenRouter) for
 ### 6. Report
 
 ```bash
-python3 ~/.claude/skills/chat-miner/scripts/mine.py report \
+python3 ~/.claude/skills/jev-miner/scripts/mine.py report \
   --work "<work-dir>" --spec "specs/<name>.json" --export-name "result.json"
 ```
 

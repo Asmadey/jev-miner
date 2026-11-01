@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a labelling page for chat-miner evaluation, served through lavish-axi.
+"""Build a labelling page for jev-miner evaluation, served through lavish-axi.
 
   make  sample long messages (stratified by a local keyword pre-filter) and write labelling.html
   read  turn the answers submitted from the page into labels.jsonl
@@ -189,7 +189,7 @@ def render(sample, spec) -> str:
     const labelled = items.filter(i => i.answer !== null);
     if (!labelled.length) return;
     if (window.lavish && window.lavish.queuePrompt) {{
-      window.lavish.queuePrompt('Labels for the chat-miner evaluation are attached in data.items.', {{
+      window.lavish.queuePrompt('Labels for the jev-miner evaluation are attached in data.items.', {{
         tag: 'labels', text: 'Отправлена разметка: ' + labelled.length + ' сообщений',
         element: form, data: {{ question: {json.dumps(QUESTION, ensure_ascii=False)}, items: labelled }}
       }});

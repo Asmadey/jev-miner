@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""chat-miner: find messages in a chat export with Jev, add context, report.
+"""jev-miner: find messages in a chat export with Jev, add context, report.
 
 Subcommands
   prepare     read a Telegram JSON export, keep messages, write messages.jsonl
@@ -172,6 +172,17 @@ def cmd_prepare(args) -> None:
     print(f"written: {work / 'messages.jsonl'}")
 
 
+MAX_BYTES_DEFAULT = 32_000  # docs: above ~32 KB of text Jev runs in its slower long-context mode
+
+
+def split_by_size(rows, max_bytes):
+    """Return (rows that fit, rows that are too big). Size is UTF-8 bytes of the message text."""
+    fit, big = [], []
+    for r in rows:
+        (big if len(r["text"].encode("utf-8")) > max_bytes else fit).append(r)
+    return fit, big
+
+
 def cmd_classify(args) -> None:
     work = Path(args.work)
     spec = load_spec(args.spec)
@@ -184,11 +195,22 @@ def cmd_classify(args) -> None:
     if args.ids:
         wanted = {r["id"] for r in read_jsonl(Path(args.ids))}
         todo = [r for r in todo if r["id"] in wanted]
+    todo, too_big = split_by_size(todo, args.max_bytes)
+    if args.allow_long:
+        todo = todo + too_big  # sent anyway, with a warning below
     if args.limit:
         todo = todo[: args.limit]
 
     print(f"spec: {spec['name']} (hash {h}) | long messages: {len(messages)} | "
           f"already answered: {len(done)} | to send: {len(todo)}")
+    if too_big:
+        ids = ", ".join(str(r["id"]) for r in too_big[:20])
+        if args.allow_long:
+            print(f"WARNING: {len(too_big)} messages are over {args.max_bytes} bytes and will be sent "
+                  f"in Jev's slower long-context mode (--allow-long): {ids}")
+        else:
+            print(f"SKIPPED: {len(too_big)} messages are over {args.max_bytes} bytes "
+                  f"(Jev long-context mode). Use --allow-long to send them anyway: {ids}")
 
     if not args.send:
         if todo:
@@ -417,6 +439,10 @@ def main(argv=None) -> None:
     s.add_argument("--workers", type=int, default=8)
     s.add_argument("--limit", type=int, default=0, help="send at most N requests (0 = all)")
     s.add_argument("--ids", default=None, help="jsonl file; only messages whose id it lists are sent")
+    s.add_argument("--max-bytes", type=int, default=MAX_BYTES_DEFAULT,
+                   help="skip messages whose text is larger than this many UTF-8 bytes (default 32000)")
+    s.add_argument("--allow-long", action="store_true",
+                   help="send messages above --max-bytes anyway (Jev long-context mode: slower, less accurate)")
     s.set_defaults(fn=cmd_classify)
 
     s = sub.add_parser("candidates")

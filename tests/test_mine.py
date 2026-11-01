@@ -1,6 +1,6 @@
-"""Offline tests for chat-miner. No network: Jev is replaced by a fake.
+"""Offline tests for jev-miner. No network: Jev is replaced by a fake.
 
-Run: python3 -m unittest discover -s ~/.claude/skills/chat-miner/tests -v
+Run: python3 -m unittest discover -s ~/.claude/skills/jev-miner/tests -v
 """
 import contextlib
 import io
@@ -194,3 +194,18 @@ class ChatMinerTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SplitBySizeTest(unittest.TestCase):
+    def test_splits_by_utf8_bytes_not_characters(self):
+        # 'я' is 2 bytes in UTF-8: 10 chars = 20 bytes
+        rows = [{"id": 1, "text": "я" * 10}, {"id": 2, "text": "x" * 25}]
+        fit, big = mine.split_by_size(rows, 24)
+        self.assertEqual([r["id"] for r in fit], [1])
+        self.assertEqual([r["id"] for r in big], [2])
+
+    def test_default_limit_is_the_documented_32kb(self):
+        self.assertEqual(mine.MAX_BYTES_DEFAULT, 32_000)
+        fit, big = mine.split_by_size([{"id": 1, "text": "a" * 32_000}, {"id": 2, "text": "a" * 32_001}], mine.MAX_BYTES_DEFAULT)
+        self.assertEqual([r["id"] for r in fit], [1])
+        self.assertEqual([r["id"] for r in big], [2])

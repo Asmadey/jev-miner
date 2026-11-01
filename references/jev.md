@@ -1,4 +1,4 @@
-# Jev (OpenRouter Decisions API): what chat-miner relies on
+# Jev (OpenRouter Decisions API): what jev-miner relies on
 
 Endpoint: `POST https://openrouter.ai/api/alpha/decisions`
 Headers: `Authorization: Bearer $OPENROUTER_API_KEY`, `Content-Type: application/json`
@@ -19,9 +19,9 @@ Request body:
 Question types used here:
 - `noul`: yes/no. Response field `noul` is the probability of yes, 0..1.
 - `choice`: one option from `criteria`. Response has `choice`, `confidence` and `probabilities`.
-- `score`: ordered scale. Not used by chat-miner.
+- `score`: ordered scale. Not used by jev-miner.
 
-Response fields used by chat-miner:
+Response fields used by jev-miner:
 - `answers[name].noul` (noul) or `answers[name].probabilities` (choice)
 - `usage.input_tokens`, `usage.output_tokens`, `usage.cost` (USD, per call)
 - `model` (dated snapshot that served the call)
@@ -32,4 +32,6 @@ One observed response: 476 input tokens, cost 0.000019992 USD.
 
 Limits: 262,144 tokens of context. Requests above about 32,000 bytes of text, and any request with an image, run in TypeSafe's long-context mode (slower, less accurate per the docs). Chat messages are short, so this normally does not apply.
 
-Threshold guidance from the docs: confidence describes how concentrated the distribution is, not whether an answer is safe. Pick thresholds from labelled examples, not from a round number. chat-miner's `eval` step is not built yet: label 100 to 150 messages by hand before trusting a threshold.
+In jev-miner: `classify` skips messages whose text is larger than 32,000 UTF-8 bytes (`--max-bytes` changes the limit). `--allow-long` sends them anyway, with a warning. Images are never sent: `prepare` keeps only message text.
+
+Threshold guidance from the docs: confidence describes how concentrated the distribution is, not whether an answer is safe. Pick thresholds from labelled examples, not from a round number. jev-miner's `eval` step is not built yet: label 100 to 150 messages by hand before trusting a threshold.
